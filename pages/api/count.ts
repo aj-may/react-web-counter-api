@@ -6,7 +6,10 @@ const prisma = new PrismaClient();
 
 const handler: NextApiHandler = async (req, res) => {
   const referer = z.string().url().safeParse(res.getHeader("Referer"));
-  if (!referer.success) return res.status(400).send("Bad Request");
+  if (!referer.success) {
+    console.error(referer.error);
+    return res.status(400).send("Bad Request");
+  }
 
   let site = await prisma.site.findUnique({
     where: { referer: referer.data },
