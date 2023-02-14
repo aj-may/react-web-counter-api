@@ -11,14 +11,16 @@ const handler: NextApiHandler = async (req, res) => {
     return res.status(400).send("Bad Request");
   }
 
+  const domain = new URL(referer.data).hostname;
+
   let site = await prisma.site.findUnique({
-    where: { referer: referer.data },
+    where: { referer: domain },
   });
 
   if (!site) {
     site = await prisma.site.create({
       data: {
-        referer: referer.data,
+        referer: domain,
         count: 1,
       },
     });
@@ -29,7 +31,7 @@ const handler: NextApiHandler = async (req, res) => {
   const count = site.count + 1;
 
   await prisma.site.update({
-    where: { referer: referer.data },
+    where: { referer: domain },
     data: { count },
   });
 
