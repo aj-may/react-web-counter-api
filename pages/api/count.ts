@@ -5,7 +5,7 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 const handler: NextApiHandler = async (req, res) => {
-  const referer = z.string().url().safeParse(res.getHeader("Referer"));
+  const referer = z.string().url().safeParse(req.headers.referer);
   if (!referer.success) {
     console.error(referer.error);
     return res.status(400).send("Bad Request");
